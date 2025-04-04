@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Custom styles
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #10b981;
+  --accent-color: #8b5cf6;
+  --text-color: #111827;
+  --background-color: #f9fafb;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 min-h-screen;
+  font-family: 'Inter', sans-serif;
+}
+
+// Custom component classes
+@layer components {
+  .btn {
+    @apply px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors;
+  }
+  
+  .card {
+    @apply bg-white p-6 rounded-lg shadow-md;
+  }
+  
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+} 

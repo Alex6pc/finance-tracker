@@ -1,0 +1,236 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+
+definePageMeta({
+  name: 'Settings',
+  layout: 'default',
+});
+
+// Currency options
+const currencies = [
+  { code: 'USD', symbol: '$', name: 'US Dollar' },
+  { code: 'EUR', symbol: '€', name: 'Euro' },
+  { code: 'GBP', symbol: '£', name: 'British Pound' },
+  { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+];
+
+// Settings state
+const settings = ref({
+  currency: 'USD',
+  dateFormat: 'MM/DD/YYYY',
+  darkMode: false,
+  notifications: true,
+  autoCategories: true,
+  language: 'en',
+});
+
+// Theme options
+const themeOptions = [
+  { value: false, label: 'Light Mode' },
+  { value: true, label: 'Dark Mode' },
+];
+
+// Date format options
+const dateFormats = [
+  { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY' },
+  { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY' },
+  { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
+];
+
+// Language options
+const languages = [
+  { code: 'en', name: 'English' },
+  { code: 'es', name: 'Spanish' },
+  { code: 'fr', name: 'French' },
+  { code: 'de', name: 'German' },
+  { code: 'zh', name: 'Chinese' },
+];
+
+// Save settings
+const saveSettings = () => {
+  // In a real app, you would save these settings to local storage or API
+  alert('Settings saved successfully!');
+};
+
+// Reset settings
+const resetSettings = () => {
+  settings.value = {
+    currency: 'USD',
+    dateFormat: 'MM/DD/YYYY',
+    darkMode: false,
+    notifications: true,
+    autoCategories: true,
+    language: 'en',
+  };
+};
+</script>
+
+<template>
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
+    
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="p-6">
+        <form @submit.prevent="saveSettings">
+          <!-- Appearance Settings -->
+          <div class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Appearance</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Currency -->
+              <div>
+                <label for="currency" class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+                <select 
+                  id="currency" 
+                  v-model="settings.currency"
+                  class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option v-for="currency in currencies" :key="currency.code" :value="currency.code">
+                    {{ currency.symbol }} - {{ currency.name }}
+                  </option>
+                </select>
+              </div>
+              
+              <!-- Date Format -->
+              <div>
+                <label for="dateFormat" class="block text-sm font-medium text-gray-700 mb-1">Date Format</label>
+                <select 
+                  id="dateFormat" 
+                  v-model="settings.dateFormat"
+                  class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option v-for="format in dateFormats" :key="format.value" :value="format.value">
+                    {{ format.label }}
+                  </option>
+                </select>
+              </div>
+              
+              <!-- Theme -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Theme</label>
+                <div class="mt-1 space-y-2">
+                  <div 
+                    v-for="option in themeOptions" 
+                    :key="option.value" 
+                    class="flex items-center"
+                  >
+                    <input 
+                      type="radio" 
+                      :id="'theme-' + option.value" 
+                      :value="option.value" 
+                      v-model="settings.darkMode"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    />
+                    <label :for="'theme-' + option.value" class="ml-2 block text-sm text-gray-700">
+                      {{ option.label }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Language -->
+              <div>
+                <label for="language" class="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                <select 
+                  id="language" 
+                  v-model="settings.language"
+                  class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option v-for="lang in languages" :key="lang.code" :value="lang.code">
+                    {{ lang.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Features Settings -->
+          <div class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Features</h2>
+            
+            <div class="space-y-4">
+              <!-- Notifications -->
+              <div class="flex items-start">
+                <div class="flex items-center h-5">
+                  <input 
+                    id="notifications" 
+                    type="checkbox" 
+                    v-model="settings.notifications"
+                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                </div>
+                <div class="ml-3 text-sm">
+                  <label for="notifications" class="font-medium text-gray-700">Enable Notifications</label>
+                  <p class="text-gray-500">Receive notifications for important updates and reminders</p>
+                </div>
+              </div>
+              
+              <!-- Auto Categories -->
+              <div class="flex items-start">
+                <div class="flex items-center h-5">
+                  <input 
+                    id="autoCategories" 
+                    type="checkbox" 
+                    v-model="settings.autoCategories"
+                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                </div>
+                <div class="ml-3 text-sm">
+                  <label for="autoCategories" class="font-medium text-gray-700">Auto-Categorize Transactions</label>
+                  <p class="text-gray-500">Automatically categorize transactions based on description</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Data Management -->
+          <div class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Data Management</h2>
+            
+            <div class="space-y-4">
+              <button 
+                type="button" 
+                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Export All Transactions
+              </button>
+              
+              <button 
+                type="button" 
+                class="px-4 py-2 border border-red-300 rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+                @click="() => confirm('Are you sure? This action cannot be undone.') && alert('Data cleared')"
+              >
+                Clear All Transactions
+              </button>
+            </div>
+          </div>
+          
+          <!-- Actions -->
+          <div class="flex justify-end space-x-3 border-t pt-6">
+            <button 
+              type="button" 
+              @click="resetSettings"
+              class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Reset to Defaults
+            </button>
+            <button 
+              type="submit" 
+              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Save Settings
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- App Information -->
+    <div class="mt-8 text-center text-gray-500 text-sm">
+      <p>FinanceTracker v1.0.0</p>
+      <p class="mt-1">Built with Nuxt 3 and NestJS</p>
+    </div>
+  </div>
+</template> 
