@@ -27,17 +27,25 @@ export const useTransactionsStore = defineStore('transactions', () => {
   const totalIncome = computed(() => {
     return transactions.value
       .filter(t => t.type === TransactionType.INCOME)
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => {
+        const amount = typeof t.amount === 'string' ? parseFloat(t.amount) : t.amount;
+        return sum + (isNaN(amount) ? 0 : amount);
+      }, 0);
   });
 
   const totalExpense = computed(() => {
     return transactions.value
       .filter(t => t.type === TransactionType.EXPENSE)
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => {
+        const amount = typeof t.amount === 'string' ? parseFloat(t.amount) : t.amount;
+        return sum + (isNaN(amount) ? 0 : amount);
+      }, 0);
   });
 
   const balance = computed(() => {
-    return totalIncome.value - totalExpense.value;
+    const income = totalIncome.value || 0;
+    const expense = totalExpense.value || 0;
+    return income - expense;
   });
 
   const categoryTotals = computed(() => {
@@ -49,7 +57,8 @@ export const useTransactionsStore = defineStore('transactions', () => {
         totals[category] = 0;
       }
       if (transaction.type === TransactionType.EXPENSE) {
-        totals[category] += transaction.amount;
+        const amount = typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount;
+        totals[category] += isNaN(amount) ? 0 : amount;
       }
     });
 
@@ -114,18 +123,27 @@ export const useTransactionsStore = defineStore('transactions', () => {
     error.value = null;
     
     try {
-      const updatedTransaction = await api.updateTransaction(id, transactionData);
+      // Call the API to update transaction in the database
+      const updatedTransaction = await api.updateTransaction(id, transactionData as any);
+      
+      // Update local state
       const index = transactions.value.findIndex(t => t.id === id);
       if (index !== -1) {
         transactions.value[index] = updatedTransaction;
+      } else {
+        // If transaction wasn't in the local list, add it
+        transactions.value.push(updatedTransaction);
       }
+      
+      // Update selected transaction if currently selected
       if (selectedTransaction.value?.id === id) {
         selectedTransaction.value = updatedTransaction;
       }
+      
       return updatedTransaction;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to update transaction';
-      console.error(error.value);
+      console.error('Transaction update error:', error.value);
       throw err;
     } finally {
       isLoading.value = false;
@@ -135,16 +153,42 @@ export const useTransactionsStore = defineStore('transactions', () => {
   async function deleteTransaction(id: string) {
     isLoading.value = true;
     error.value = null;
+    let previousLength = 0;
     
     try {
-      await api.deleteTransaction(id);
+      // First check if the transaction exists
+      const transactionExists = transactions.value.some(t => t.id === id);
+      if (!transactionExists) {
+        console.warn(`Transaction with ID ${id} not found in local state`);
+      }
+      
+      // Store original length for comparison
+      previousLength = transactions.value.length;
+      
+      // Remove from local state immediately for responsive UI
       transactions.value = transactions.value.filter(t => t.id !== id);
+      
+      // Clear selected transaction if it was deleted
       if (selectedTransaction.value?.id === id) {
         selectedTransaction.value = null;
       }
+      
+      // Call API to delete from backend
+      await api.deleteTransaction(id);
+      
+      // Return success
+      return { success: true, id };
     } catch (err) {
+      // If API call fails, revert the local deletion
+      if (transactions.value.length !== previousLength) {
+        console.warn('API Error - transaction delete failed, need to refresh');
+        // We could revert the transaction removal here, but it might be confusing
+        // for users to see a transaction reappear. Instead, we'll log an error
+        // and let them refresh.
+      }
+      
       error.value = err instanceof Error ? err.message : 'Failed to delete transaction';
-      console.error(error.value);
+      console.error('Delete transaction error:', error.value);
       throw err;
     } finally {
       isLoading.value = false;

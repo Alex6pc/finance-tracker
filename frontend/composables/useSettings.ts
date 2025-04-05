@@ -42,8 +42,24 @@ export const useSettings = () => {
   
   // Format amount with currency symbol
   const formatAmount = (amount: number) => {
-    const symbol = getCurrencySymbol();
-    return `${symbol}${amount.toFixed(2)}`;
+    // Handle NaN or undefined values
+    if (amount === undefined || isNaN(amount)) {
+      amount = 0;
+    }
+    
+    const settings = getSettings();
+    const locale = settings.language === 'en' ? 'en-US' : 'de-DE'; // Adjust based on supported languages
+    
+    try {
+      return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency: settings.currency || 'EUR'
+      }).format(amount);
+    } catch (error) {
+      // Fallback to basic formatting if Intl.NumberFormat fails
+      const symbol = getCurrencySymbol();
+      return `${symbol}${amount.toFixed(2)}`;
+    }
   };
   
   // Safe save function

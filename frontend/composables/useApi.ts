@@ -24,6 +24,17 @@ export const useApi = () => {
         throw new Error(`API Error: ${response.status} ${response.statusText}`);
       }
 
+      // Check if there's content to parse
+      const contentType = response.headers.get('content-type');
+      const contentLength = response.headers.get('content-length');
+      
+      // If the response is empty or not JSON, return null for DELETE operations
+      if (!contentType || !contentType.includes('application/json') || contentLength === '0') {
+        if (options.method === 'DELETE') {
+          return null as T;
+        }
+      }
+      
       return await response.json() as T;
     } catch (err) {
       console.error('API Error:', err);
@@ -60,17 +71,46 @@ export const useApi = () => {
     });
   };
 
-  const updateTransaction = async (id: string, transaction: UpdateTransactionDto): Promise<Transaction> => {
+  const updateTransaction = async (id: string, transaction: CreateTransactionDto): Promise<Transaction> => {
+    // Clean the transaction data before sending to server
+    const { id: _, isDeleted, createdAt, updatedAt, ...cleanData } = transaction as any;
+    
     return await apiCall<Transaction>(`/transactions/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(transaction),
+       body: JSON.stringify(cleanData),
     });
   };
 
   const deleteTransaction = async (id: string): Promise<void> => {
-    await apiCall<void>(`/transactions/${id}`, {
-      method: 'DELETE',
-    });
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const response = await fetch(`${API_URL}/transactions/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+      
+      // Check if there's actually content before trying to parse JSON
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json') && response.headers.get('content-length') !== '0') {
+        await response.json(); // Only try to parse if there's JSON content
+      }
+      // No need to return anything for a delete operation
+      return;
+    } catch (err) {
+      console.error('Delete Error:', err);
+      error.value = err instanceof Error ? err.message : 'Unknown error occurred';
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
   };
 
   // File Import API

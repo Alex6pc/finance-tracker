@@ -4,6 +4,10 @@ import { useTransactionsStore } from '~/stores/transactions';
 
 const transactionsStore = useTransactionsStore();
 
+const emit = defineEmits<{
+  'import-success': [];
+}>();
+
 const isUploading = ref(false);
 const isDragging = ref(false);
 const fileName = ref('');
@@ -104,6 +108,9 @@ const uploadFile = async () => {
     }
     selectedFile.value = null;
     fileName.value = '';
+    
+    // Emit success event
+    emit('import-success');
     
     // Reset progress after a short delay
     setTimeout(() => {

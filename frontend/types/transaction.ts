@@ -30,7 +30,9 @@ export interface CreateTransactionDto {
   paymentMethod?: string;
 }
 
-export interface UpdateTransactionDto extends Partial<CreateTransactionDto> {}
+export interface UpdateTransactionDto extends Partial<CreateTransactionDto> {
+  isDeleted?: boolean;
+}
 
 export interface FilterTransactionDto {
   startDate?: string;

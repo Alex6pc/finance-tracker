@@ -31,6 +31,11 @@ const { formatAmount, isDarkMode } = useSettings();
 
 // Format currency for display
 const formatCurrency = (amount: number): string => {
+  // Handle NaN or undefined values
+  if (amount === undefined || isNaN(amount)) {
+    amount = 0;
+  }
+  
   try {
     return formatAmount(amount);
   } catch (err) {
