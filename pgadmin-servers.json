@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Finance Tracker DB",
+      "Group": "Finance",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "bank_transactions",
+      "Username": "postgres",
+      "SSLMode": "prefer",
+      "Password": "postgres"
+    }
+  }
+} 

@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres-bank
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bank_transactions
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - db-network
+          # Add health check like in the example
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "bank_transactions"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    # pgadmin:
+      image: dpage/pgadmin4
+      container_name: pgadmin-finance-tracker
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.com
+        PGADMIN_DEFAULT_PASSWORD: admin
+      # Add this to auto-configure the server connection
+        PGADMIN_SERVER_JSON_FILE: /pgadmin4/servers.json
+      volumes:
+      # Add this volume to provide server config
+        - ./pgadmin-servers.json:/pgadmin4/servers.json
+      ports:
+        - "5050:80"
+      depends_on:
+        - postgres
+      restart: unless-stopped
+      networks:
+        - db-network
+
+  adminer:
+    image: adminer
+    container_name: adminer-finance-tracker
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres-bank
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - db-network
+
+networks:
+  db-network:
+    driver: bridge
+
+volumes:
+  postgres_data: 

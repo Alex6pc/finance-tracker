@@ -12,7 +12,13 @@
     "frontend:start": "cd frontend && npm run start",
     "backend:start": "cd backend && npm run start",
     "start": "concurrently \"npm run frontend:start\" \"npm run backend:start\"",
-    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "docker:service": "sudo service docker start || true && sleep 3",
+    "docker:db": "npm run docker:service && docker-compose -f docker-compose.db.yml up -d",
+    "docker:db:down": "docker-compose -f docker-compose.db.yml down",
+    "docker:full": "npm run docker:service && docker-compose up -d",
+    "docker:full:down": "docker-compose down",
+    "docker:build": "npm run docker:service && docker-compose build"
   },
   "author": "",
   "license": "ISC",
