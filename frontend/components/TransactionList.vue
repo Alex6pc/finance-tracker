@@ -2,6 +2,7 @@
 import { TransactionType } from '~/types/transaction';
 import type { Transaction } from '~/types/transaction';
 import dayjs from 'dayjs';
+import { useSettings } from '~/composables/useSettings';
 
 const props = defineProps<{
   transactions: Transaction[];
@@ -14,33 +15,43 @@ const emit = defineEmits<{
   view: [transaction: Transaction];
 }>();
 
+// Use the settings composable for currency formatting
+const { formatAmount } = useSettings();
+
 const formatDate = (date: Date | string): string => {
   return dayjs(date).format('MMM D, YYYY');
 };
 
+// Use the formatAmount from the settings composable or fallback to Intl.NumberFormat
 const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
+  try {
+    // Try to use the formatAmount function from settings
+    return formatAmount(amount);
+  } catch (error) {
+    // Fallback to default formatting
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(amount);
+  }
 };
 
 const getAmountClass = (type: TransactionType): string => {
   return type === TransactionType.INCOME 
-    ? 'text-green-600' 
+    ? 'text-green-600 dark:text-green-400' 
     : type === TransactionType.EXPENSE 
-      ? 'text-red-600' 
-      : 'text-blue-600';
+      ? 'text-red-600 dark:text-red-400' 
+      : 'text-blue-600 dark:text-blue-400';
 };
 </script>
 
 <template>
   <div class="transaction-list">
     <div v-if="loading" class="flex justify-center my-10">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
     </div>
     
-    <div v-else-if="transactions.length === 0" class="text-center my-10 text-gray-500">
+    <div v-else-if="transactions.length === 0" class="text-center my-10 text-gray-500 dark:text-gray-400">
       <p class="text-lg">No transactions found</p>
       <p class="text-sm">Try adjusting your filters or add new transactions</p>
     </div>
@@ -48,27 +59,27 @@ const getAmountClass = (type: TransactionType): string => {
     <div v-else class="overflow-x-auto">
       <table class="w-full border-collapse">
         <thead>
-          <tr class="bg-gray-100 text-left">
-            <th class="p-3 font-medium">Date</th>
-            <th class="p-3 font-medium">Description</th>
-            <th class="p-3 font-medium">Category</th>
-            <th class="p-3 font-medium text-right">Amount</th>
-            <th class="p-3 font-medium text-center">Actions</th>
+          <tr class="bg-gray-100 dark:bg-gray-700 text-left">
+            <th class="p-3 font-medium text-gray-700 dark:text-gray-300">Date</th>
+            <th class="p-3 font-medium text-gray-700 dark:text-gray-300">Description</th>
+            <th class="p-3 font-medium text-gray-700 dark:text-gray-300">Category</th>
+            <th class="p-3 font-medium text-gray-700 dark:text-gray-300 text-right">Amount</th>
+            <th class="p-3 font-medium text-gray-700 dark:text-gray-300 text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr 
             v-for="transaction in transactions" 
             :key="transaction.id"
-            class="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+            class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
-            <td class="p-3 text-sm">{{ formatDate(transaction.date) }}</td>
+            <td class="p-3 text-sm text-gray-700 dark:text-gray-300">{{ formatDate(transaction.date) }}</td>
             <td class="p-3">
-              <div class="font-medium">{{ transaction.description }}</div>
-              <div v-if="transaction.note" class="text-xs text-gray-500 truncate max-w-xs">{{ transaction.note }}</div>
+              <div class="font-medium text-gray-800 dark:text-gray-200">{{ transaction.description }}</div>
+              <div v-if="transaction.note" class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">{{ transaction.note }}</div>
             </td>
             <td class="p-3">
-              <span class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100">
+              <span class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200">
                 {{ transaction.category || 'Uncategorized' }}
               </span>
             </td>
@@ -79,7 +90,7 @@ const getAmountClass = (type: TransactionType): string => {
               <div class="flex justify-center space-x-2">
                 <button 
                   @click="emit('view', transaction)"
-                  class="p-1 text-blue-600 hover:text-blue-800 transition-colors"
+                  class="p-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
                   title="View details"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,7 +100,7 @@ const getAmountClass = (type: TransactionType): string => {
                 </button>
                 <button 
                   @click="emit('edit', transaction)"
-                  class="p-1 text-yellow-600 hover:text-yellow-800 transition-colors"
+                  class="p-1 text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 transition-colors"
                   title="Edit"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -98,7 +109,7 @@ const getAmountClass = (type: TransactionType): string => {
                 </button>
                 <button 
                   @click="emit('delete', transaction.id)"
-                  class="p-1 text-red-600 hover:text-red-800 transition-colors"
+                  class="p-1 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
                   title="Delete"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,6 +127,6 @@ const getAmountClass = (type: TransactionType): string => {
 
 <style lang="scss" scoped>
 .transaction-list {
-  @apply bg-white rounded-lg shadow-md overflow-hidden;
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden;
 }
 </style> 

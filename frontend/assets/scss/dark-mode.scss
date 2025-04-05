@@ -1,0 +1,137 @@
+/* Dark mode styles for the entire application */
+
+/* Base styles for dark mode */
+.dark {
+  /* Background colors */
+  --bg-primary: #1e1e2d;
+  --bg-secondary: #2d2d3a;
+  --bg-tertiary: #343444;
+  --bg-input: #2a2a37;
+  
+  /* Text colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e2e2e2;
+  --text-muted: #9ca3af;
+  --text-accent: #60a5fa;
+  
+  /* Border colors */
+  --border-color: #3f3f4e;
+  --border-light: #4b4b5a;
+  
+  /* Button colors */
+  --button-primary: #3b82f6;
+  --button-primary-hover: #2563eb;
+  --button-secondary: #374151;
+  --button-secondary-hover: #4b5563;
+}
+
+/* Apply dark mode variables to elements */
+.dark {
+  color-scheme: dark;
+  
+  /* Base elements */
+  body, .app-container {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+  
+  /* Cards and container elements */
+  .card, .panel, .container-box, .widget {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+  }
+  
+  /* Form elements */
+  input, select, textarea {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    
+    &::placeholder {
+      color: var(--text-muted);
+    }
+    
+    &:focus {
+      border-color: var(--text-accent);
+    }
+  }
+  
+  /* Buttons */
+  button, .btn {
+    &.primary {
+      background-color: var(--button-primary);
+      
+      &:hover {
+        background-color: var(--button-primary-hover);
+      }
+    }
+    
+    &.secondary {
+      background-color: var(--button-secondary);
+      border-color: var(--border-light);
+      
+      &:hover {
+        background-color: var(--button-secondary-hover);
+      }
+    }
+  }
+  
+  /* Table elements */
+  table {
+    thead {
+      background-color: var(--bg-tertiary);
+      
+      th {
+        color: var(--text-secondary);
+      }
+    }
+    
+    tbody {
+      tr {
+        border-color: var(--border-color);
+        
+        &:hover {
+          background-color: var(--bg-tertiary);
+        }
+      }
+    }
+  }
+  
+  /* Navigation */
+  nav, .navbar, .sidebar {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    
+    a, .nav-link {
+      color: var(--text-secondary);
+      
+      &:hover, &.active {
+        color: var(--text-accent);
+      }
+    }
+  }
+  
+  /* Dividers */
+  hr, .divider {
+    border-color: var(--border-color);
+  }
+  
+  /* Scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: 4px;
+    
+    &:hover {
+      background: var(--text-muted);
+    }
+  }
+} 

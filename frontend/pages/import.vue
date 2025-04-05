@@ -11,7 +11,7 @@ const transactionsStore = useTransactionsStore();
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">Import Transactions</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Import Transactions</h1>
     
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Import form -->
@@ -20,27 +20,27 @@ const transactionsStore = useTransactionsStore();
       </div>
       
       <!-- Help section -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-lg font-semibold mb-4">How to Import Transactions</h2>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-semibold mb-4 dark:text-gray-100">How to Import Transactions</h2>
         
-        <div class="space-y-4 text-gray-600">
+        <div class="space-y-4 text-gray-600 dark:text-gray-400">
           <div>
-            <h3 class="font-medium text-gray-800 mb-1">1. Export from your bank</h3>
+            <h3 class="font-medium text-gray-800 dark:text-gray-200 mb-1">1. Export from your bank</h3>
             <p>Log into your online banking portal and download your transactions as a CSV file.</p>
           </div>
           
           <div>
-            <h3 class="font-medium text-gray-800 mb-1">2. Upload the CSV file</h3>
+            <h3 class="font-medium text-gray-800 dark:text-gray-200 mb-1">2. Upload the CSV file</h3>
             <p>Drag and drop the CSV file into the upload area or click to browse your files.</p>
           </div>
           
           <div>
-            <h3 class="font-medium text-gray-800 mb-1">3. Review and confirm</h3>
+            <h3 class="font-medium text-gray-800 dark:text-gray-200 mb-1">3. Review and confirm</h3>
             <p>The system will process the file and import your transactions automatically.</p>
           </div>
           
-          <div class="border-t pt-4 mt-4">
-            <h3 class="font-medium text-gray-800 mb-1">Supported CSV Format</h3>
+          <div class="border-t dark:border-gray-700 pt-4 mt-4">
+            <h3 class="font-medium text-gray-800 dark:text-gray-200 mb-1">Supported CSV Format</h3>
             <p class="mb-2">Your CSV file should contain the following columns:</p>
             <ul class="list-disc pl-5">
               <li>Date (required): The transaction date</li>
@@ -51,8 +51,8 @@ const transactionsStore = useTransactionsStore();
             </ul>
           </div>
           
-          <div class="border-t pt-4 mt-4">
-            <h3 class="font-medium text-gray-800 mb-1">Supported Banks</h3>
+          <div class="border-t dark:border-gray-700 pt-4 mt-4">
+            <h3 class="font-medium text-gray-800 dark:text-gray-200 mb-1">Supported Banks</h3>
             <p>The import function can handle statements from most major banks.</p>
           </div>
         </div>
@@ -62,10 +62,10 @@ const transactionsStore = useTransactionsStore();
     <!-- Recently imported transactions -->
     <div class="mt-10" v-if="transactionsStore.transactions.length > 0">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold text-gray-900">Recent Transactions</h2>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Recent Transactions</h2>
         <NuxtLink 
           to="/transactions" 
-          class="text-sm font-medium text-blue-600 hover:text-blue-800"
+          class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
         >
           View All
         </NuxtLink>

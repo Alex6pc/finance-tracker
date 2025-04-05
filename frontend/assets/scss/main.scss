@@ -1,32 +1,117 @@
+@use 'dark-mode';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-// Custom styles
+// Base variables
 :root {
+  // Light mode variables
   --primary-color: #3b82f6;
   --secondary-color: #10b981;
   --accent-color: #8b5cf6;
   --text-color: #111827;
   --background-color: #f9fafb;
+  
+  // Dark mode variables (these will be overridden by dark.scss when dark mode is active)
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --bg-input: #ffffff;
+  
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #6b7280;
+  --text-accent: #3b82f6;
+  
+  --border-color: #e5e7eb;
+  --border-light: #f3f4f6;
+  
+  --button-primary: #3b82f6;
+  --button-primary-hover: #2563eb;
+  --button-secondary: #f3f4f6;
+  --button-secondary-hover: #e5e7eb;
 }
 
 body {
   @apply bg-gray-50 text-gray-900 min-h-screen;
   font-family: 'Inter', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 // Custom component classes
 @layer components {
   .btn {
-    @apply px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors;
+    @apply px-4 py-2 rounded-md transition-colors;
+    
+    &.primary {
+      background-color: var(--button-primary);
+      color: white;
+      
+      &:hover {
+        background-color: var(--button-primary-hover);
+      }
+    }
+    
+    &.secondary {
+      background-color: var(--button-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      
+      &:hover {
+        background-color: var(--button-secondary-hover);
+      }
+    }
   }
   
   .card {
-    @apply bg-white p-6 rounded-lg shadow-md;
+    @apply p-6 rounded-lg shadow-md;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
   }
   
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-} 
+  
+  .form-input {
+    @apply px-3 py-2 rounded-md focus:outline-none focus:ring-2;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    
+    &:focus {
+      border-color: var(--text-accent);
+    }
+  }
+  
+  .table-container {
+    table {
+      @apply w-full;
+      
+      thead {
+        background-color: var(--bg-tertiary);
+        
+        th {
+          @apply py-3 px-4 text-left font-medium;
+          color: var(--text-secondary);
+        }
+      }
+      
+      tbody {
+        tr {
+          border-bottom: 1px solid var(--border-color);
+          
+          &:hover {
+            background-color: var(--bg-tertiary);
+          }
+          
+          td {
+            @apply py-3 px-4;
+          }
+        }
+      }
+    }
+  }
+}

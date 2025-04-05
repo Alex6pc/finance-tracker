@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-
 // Mobile menu state
 const isMobileMenuOpen = ref(false);
 
@@ -8,6 +6,17 @@ const isMobileMenuOpen = ref(false);
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
+
+// Dark mode
+const { $isDarkMode } = useNuxtApp();
+const isDarkMode = ref(false);
+
+onMounted(() => {
+  // Get the dark mode state when component mounts
+  if ($isDarkMode) {
+    isDarkMode.value = $isDarkMode();
+  }
+});
 
 // Navigation items
 const navItems = [
@@ -19,7 +28,7 @@ const navItems = [
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Mobile menu overlay -->
     <div 
       v-if="isMobileMenuOpen" 
@@ -29,22 +38,22 @@ const navItems = [
     
     <!-- Sidebar -->
     <aside 
-      class="fixed top-0 left-0 z-30 h-screen transition-transform bg-white border-r border-gray-200 lg:translate-x-0"
+      class="fixed top-0 left-0 z-30 h-screen transition-transform bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 lg:translate-x-0"
       :class="[isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full', 'w-64']"
     >
       <!-- Logo -->
-      <div class="flex items-center justify-between h-16 px-4 border-b">
+      <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center">
-          <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
             <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
           </svg>
-          <span class="ml-2 text-xl font-bold text-gray-900">FinanceTracker</span>
+          <span class="ml-2 text-xl font-bold text-gray-900 dark:text-white">FinanceTracker</span>
         </div>
         <!-- Close button for mobile -->
         <button 
           @click="toggleMobileMenu"
-          class="p-1 text-gray-600 rounded-md hover:bg-gray-100 lg:hidden"
+          class="p-1 text-gray-600 dark:text-gray-400 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -53,13 +62,15 @@ const navItems = [
       </div>
       
       <!-- Navigation -->
-      <nav class="px-2 py-4 space-y-1">
+      <nav class="px-2 py-4 space-y-1 dark:bg-gray-600">
         <NuxtLink 
           v-for="item in navItems" 
           :key="item.name"
           :to="item.path"
           class="flex items-center px-4 py-2 text-sm font-medium rounded-md group"
-          :class="$route.path === item.path ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100'"
+          :class="$route.path === item.path ? 
+            'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 
+            'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'"
         >
           <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon" />
@@ -72,11 +83,11 @@ const navItems = [
     <!-- Main content -->
     <div class="lg:pl-64">
       <!-- Top navigation -->
-      <header class="flex items-center justify-between h-16 px-4 bg-white border-b lg:px-6">
+      <header class="flex items-center justify-between h-16 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 lg:px-6">
         <!-- Mobile menu button -->
         <button 
           @click="toggleMobileMenu"
-          class="p-1 text-gray-600 rounded-md hover:bg-gray-100 lg:hidden"
+          class="p-1 text-gray-600 dark:text-gray-400 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -85,14 +96,14 @@ const navItems = [
         
         <!-- Page title (on mobile) -->
         <div class="lg:hidden">
-          <h1 class="text-lg font-semibold text-gray-900">{{ $route.name }}</h1>
+          <h1 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $route.name }}</h1>
         </div>
         
         <!-- User menu -->
         <div class="flex items-center">
-          <button class="flex items-center text-sm font-medium text-gray-700 rounded-full hover:text-gray-900 focus:outline-none">
+          <button class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 rounded-full hover:text-gray-900 dark:hover:text-white focus:outline-none">
             <span class="sr-only">Open user menu</span>
-            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+            <div class="w-8 h-8 bg-blue-600 dark:bg-blue-500 rounded-full flex items-center justify-center text-white">
               U
             </div>
             <span class="ml-2 hidden md:block">User</span>

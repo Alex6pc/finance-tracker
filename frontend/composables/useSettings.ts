@@ -46,24 +46,6 @@ export const useSettings = () => {
     return `${symbol}${amount.toFixed(2)}`;
   };
   
-  // Format date based on user preference
-  const formatDate = (date: string | Date) => {
-    const d = new Date(date);
-    const format = getSettings().dateFormat;
-    
-    const day = d.getDate().toString().padStart(2, '0');
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const year = d.getFullYear();
-    
-    if (format === 'MM/DD/YYYY') {
-      return `${month}/${day}/${year}`;
-    } else if (format === 'DD/MM/YYYY') {
-      return `${day}/${month}/${year}`;
-    } else {
-      return `${year}-${month}-${day}`;
-    }
-  };
-  
   // Safe save function
   const saveSettings = (newSettings: UserSettings) => {
     if (settingsStore) {
@@ -91,13 +73,11 @@ export const useSettings = () => {
     // Utility functions
     getCurrencySymbol,
     formatAmount,
-    formatDate,
     saveSettings,
     resetSettings,
     
     // Convenience getters
     isDarkMode: computed(() => getSettings().darkMode),
-    currentLanguage: computed(() => getSettings().language),
     currentCurrency: computed(() => getSettings().currency),
   };
 }; 

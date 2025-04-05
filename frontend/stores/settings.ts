@@ -4,10 +4,9 @@ import { ref } from 'vue';
 // Define types for our settings
 export interface UserSettings {
   currency: string;
-  dateFormat: string;
   darkMode: boolean;
-  notifications: boolean;
-  autoCategories: boolean;
+  // Keep these fields for future compatibility but they're not used in the UI for now
+  dateFormat: string;
   language: string;
 }
 
@@ -15,9 +14,7 @@ export interface UserSettings {
 export const defaultSettings: UserSettings = {
   currency: 'EUR',
   dateFormat: 'DD/MM/YYYY',
-  darkMode: false,
-  notifications: true,
-  autoCategories: true,
+  darkMode: true,
   language: 'en',
 };
 
