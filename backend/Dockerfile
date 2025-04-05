@@ -13,6 +13,9 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
+# Make scripts executable
+RUN chmod +x ./scripts/*.sh 2>/dev/null || true
+
 # Build the application
 RUN npm run build
 

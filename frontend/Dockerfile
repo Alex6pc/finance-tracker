@@ -13,11 +13,8 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
-RUN npm run build
-
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Command to run the application
+# Command to run the application in development mode with hot reloading
 CMD ["npm", "run", "start"] 

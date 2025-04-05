@@ -73,6 +73,11 @@ const handleTransactionSubmit = async (formData: any) => {
     console.error('Failed to save transaction:', error);
   }
 };
+
+// Refresh transactions
+const refreshTransactions = async () => {
+  await transactionsStore.fetchTransactions();
+};
 </script>
 
 <template>
@@ -82,6 +87,17 @@ const handleTransactionSubmit = async (formData: any) => {
       <h1 class="text-2xl font-bold text-gray-900 mb-4 md:mb-0">Transactions</h1>
       
       <div class="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0">
+        <button 
+          @click="refreshTransactions" 
+          class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50"
+          :disabled="transactionsStore.isLoading"
+        >
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh
+        </button>
+        
         <button 
           @click="toggleFilters" 
           class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50"
@@ -112,7 +128,6 @@ const handleTransactionSubmit = async (formData: any) => {
         @reset="transactionsStore.fetchTransactions()"
       />
     </div>
-    
     <!-- Transaction list -->
     <TransactionList 
       :transactions="transactionsStore.sortedTransactions" 
@@ -139,7 +154,7 @@ const handleTransactionSubmit = async (formData: any) => {
               </svg>
             </button>
           </div>
-          
+          {{ selectedTransaction }}
           <TransactionForm 
             :initial-values="selectedTransaction || undefined" 
             :is-editing="isEditing"

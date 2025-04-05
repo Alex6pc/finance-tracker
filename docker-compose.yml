@@ -14,11 +14,32 @@ services:
       - finance-tracker-network
     restart: unless-stopped
 
+  frontend:
+    image: node:20-alpine
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    container_name: finance-tracker-frontend
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "3000:3000"
+      - "24678:24678"
+    environment:
+      - NUXT_HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - backend
+    networks:
+      - finance-tracker-network
+    restart: unless-stopped
+    
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: finance-tracker-backend
+    image: node:20-alpine
+    working_dir: /app
+    ports:
+      - "3001:3001"
+    command: sh -c "npm install && npm run start:dev"
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -27,26 +48,14 @@ services:
       DB_DATABASE: bank_transactions
       NODE_ENV: development
       PORT: 3001
-    ports:
-      - "3001:3001"
+    volumes:
+      - ./backend:/app
     depends_on:
       - postgres
     networks:
       - finance-tracker-network
     restart: unless-stopped
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: finance-tracker-frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - finance-tracker-network
-    restart: unless-stopped
     
   adminer:
     image: adminer
@@ -63,7 +72,7 @@ services:
 
 networks:
   finance-tracker-network:
-    driver: bridge
+    name: finance-tracker-network
 
 volumes:
   postgres_data: 

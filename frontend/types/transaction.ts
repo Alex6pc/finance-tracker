@@ -14,8 +14,9 @@ export interface Transaction {
   note?: string;
   isRecurring: boolean;
   paymentMethod?: string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  isDeleted?: boolean;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 
 export interface CreateTransactionDto {

@@ -39,6 +39,9 @@ export class Transaction {
   @Column({ nullable: true })
   paymentMethod: string;
 
+  @Column({ default: false })
+  isDeleted: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

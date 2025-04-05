@@ -69,15 +69,15 @@ migration-generate:
 		echo "Error: Migration name is required. Use 'make migration-generate name=YourMigrationName'"; \
 		exit 1; \
 	fi
-	docker-compose exec backend npm run typeorm migration:generate -- -n $(name)
+	docker-compose exec backend npm run typeorm -- migration:generate src/database/migrations/$(name)
 
 # Run pending migrations
 migration-run:
-	docker-compose exec backend npm run typeorm migration:run
+	docker-compose exec backend npm run migration:run
 
 # Revert the last migration
 migration-revert:
-	docker-compose exec backend npm run typeorm migration:revert
+	docker-compose exec backend npm run migration:revert
 
 # Allow chaining commands with spaces
 %:
