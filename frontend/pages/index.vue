@@ -2,6 +2,7 @@
 import { useTransactionsStore } from '~/stores/transactions';
 import { onMounted, ref } from 'vue';
 import type { Transaction } from '~/types/transaction';
+import dayjs from 'dayjs';
 
 definePageMeta({
   name: 'Dashboard',
@@ -11,6 +12,20 @@ definePageMeta({
 const transactionsStore = useTransactionsStore();
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+
+// Date range picker - first and last day of current month
+const startDate = ref(dayjs().startOf('month').format('YYYY-MM-DD'));
+const endDate = ref(dayjs().endOf('month').format('YYYY-MM-DD'));
+
+// Apply date filter
+const applyDateFilter = () => {
+  const dateFilter = {
+    startDate: startDate.value,
+    endDate: endDate.value
+  };
+  transactionsStore.setFilter(dateFilter);
+  loadTransactions();
+};
 
 // Load transactions when component mounts
 onMounted(async () => {
@@ -64,7 +79,30 @@ const handleDeleteTransaction = async (id: string) => {
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Dashboard</h1>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 md:mb-0">Dashboard</h1>
+      
+      <!-- Date Picker -->
+      <div class="flex items-center space-x-2">
+        <input 
+          type="date" 
+          v-model="startDate" 
+          class="px-3 py-2 border border-gray-300 rounded-md text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+        />
+        <span class="text-gray-500 dark:text-gray-400">to</span>
+        <input 
+          type="date" 
+          v-model="endDate" 
+          class="px-3 py-2 border border-gray-300 rounded-md text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+        />
+        <button 
+          @click="applyDateFilter" 
+          class="px-3 py-2 bg-blue-600 rounded-md text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
+        >
+          Apply
+        </button>
+      </div>
+    </div>
     
     <!-- Error display -->
     <div v-if="error" class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 p-4 rounded-lg mb-6">
@@ -117,13 +155,12 @@ const handleDeleteTransaction = async (id: string) => {
           </NuxtLink>
         </div>
       </div>
-      
       <TransactionList 
-        :transactions="transactionsStore.sortedTransactions.slice(0, 5)" 
-        :loading="isLoading"
-        @view="handleViewTransaction"
-        @edit="handleEditTransaction"
-        @delete="handleDeleteTransaction"
+      :transactions="transactionsStore.sortedTransactions.slice(0, 5)" 
+      :loading="isLoading"
+      @view="handleViewTransaction"
+      @edit="handleEditTransaction"
+      @delete="handleDeleteTransaction"
       />
     </div>
   </div>

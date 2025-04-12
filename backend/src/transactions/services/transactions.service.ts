@@ -27,7 +27,6 @@ export class TransactionsService {
     if (startDate && endDate) {
       where.date = Between(new Date(startDate), new Date(endDate));
     }
-    
     if (type) {
       where.type = type;
     }
@@ -45,7 +44,7 @@ export class TransactionsService {
     if (Object.keys(where).length > 1) { // > 1 because we already have isDeleted
       // We need to use andWhere since we already have a where clause
       Object.entries(where).forEach(([key, value]) => {
-        if (key !== 'isDeleted') { // Skip isDeleted as we already added it
+        // if (key !== 'isDeleted') { // Skip isDeleted as we already added it
           if (key === 'date') {
             query.andWhere('transaction.date BETWEEN :startDate AND :endDate', {
               startDate: startDate ? new Date(startDate) : new Date(),
@@ -54,7 +53,6 @@ export class TransactionsService {
           } else {
             query.andWhere(`transaction.${key} = :${key}`, { [key]: value });
           }
-        }
       });
     }
     
@@ -66,7 +64,9 @@ export class TransactionsService {
       query.andWhere('transaction.amount <= :maxAmount', { maxAmount });
     }
     
-    return query.orderBy('transaction.date', 'DESC').getMany();
+    const results = await query.orderBy('transaction.date', 'DESC').getMany();
+    
+    return results;
   }
 
   async findOne(id: string): Promise<Transaction> {

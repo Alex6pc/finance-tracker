@@ -1,4 +1,4 @@
-.PHONY: start stop restart install db logs build status clean all docker-service dbonly migration-generate migration-run migration-revert
+.PHONY: start stop restart install db logs build status clean all docker-service dbonly migration-generate migration-run migration-revert backend-logs dev
 
 # Default target
 all: start
@@ -23,6 +23,10 @@ start: docker-service
 # Stop all containers
 stop:
 	docker-compose down
+
+# Start containers in attached mode to see all logs
+# dev: docker-service
+# 	docker-compose up
 
 # Restart all containers
 restart: stop start
@@ -61,7 +65,11 @@ frontend:
 
 # Show logs
 logs:
-	docker-compose logs -f
+	docker-compose logs -f --tail=100
+
+# Show only backend logs
+# backend-logs:
+# 	docker-compose logs -f backend
 
 # Generate a new migration
 migration-generate:
@@ -83,4 +91,4 @@ migration-revert:
 %:
 	@:
 
-.SERIAL: all start stop restart install db logs build status clean migration-generate migration-run migration-revert 
+.SERIAL: all start stop restart install db logs build status clean migration-generate migration-run migration-revert backend-logs dev 

@@ -2,6 +2,7 @@
 import { useTransactionsStore } from '~/stores/transactions';
 import { ref, onMounted } from 'vue';
 import type { FilterTransactionDto, Transaction } from '~/types/transaction';
+import dayjs from 'dayjs';
 
 definePageMeta({
   name: 'Transactions',
@@ -12,6 +13,20 @@ const transactionsStore = useTransactionsStore();
 const showFilters = ref(false);
 const showAddModal = ref(false);
 const successMessage = ref<string | null>(null);
+
+// Date range picker - first and last day of current month
+const startDate = ref(dayjs().startOf('month').format('YYYY-MM-DD'));
+const endDate = ref(dayjs().endOf('month').format('YYYY-MM-DD'));
+
+// Apply date filter
+const applyDateFilter = () => {
+  const dateFilter: FilterTransactionDto = {
+    startDate: startDate.value,
+    endDate: endDate.value
+  };
+  transactionsStore.setFilter(dateFilter);
+  transactionsStore.fetchTransactions();
+};
 
 // Modal
 const selectedTransaction = ref<Transaction | null>(null);
@@ -62,17 +77,11 @@ const closeModal = () => {
 // Handle transaction deletion
 const deleteTransaction = async (id: string) => {
   try {
-    if (confirm('Are you sure you want to delete this transaction?')) {
-      // Show loading indicator
-      transactionsStore.isLoading = true;
       
       // Delete from backend
       await transactionsStore.deleteTransaction(id);
       
-      // Show success message
-      successMessage.value = 'Transaction deleted successfully';
-      clearSuccessMessage();
-    }
+    
   } catch (error) {
     console.error('Failed to delete transaction:', error);
     alert('Failed to delete the transaction. Please try again.');
@@ -109,27 +118,27 @@ const refreshTransactions = async () => {
       <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 md:mb-0">Transactions</h1>
       
       <div class="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0">
-        <button 
-          @click="refreshTransactions" 
-          class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
-          :disabled="transactionsStore.isLoading"
-        >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Refresh
-        </button>
-        
-        <button 
-          @click="toggleFilters" 
-          class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
-        >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-          </svg>
-          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-        </button>
-        
+        <!-- Date Picker -->
+        <div class="flex items-center space-x-2">
+          <input 
+            type="date" 
+            v-model="startDate" 
+            class="px-3 py-2 border border-gray-300 rounded-md text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+          />
+          <span class="text-gray-500 dark:text-gray-400">to</span>
+          <input 
+            type="date" 
+            v-model="endDate" 
+            class="px-3 py-2 border border-gray-300 rounded-md text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+          />
+          <button 
+            @click="applyDateFilter" 
+            class="px-3 py-2 border border-gray-300 rounded-md text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+          >
+            Apply
+          </button>
+        </div>
+         
         <button 
           @click="openAddModal" 
           class="flex items-center justify-center px-4 py-2 bg-blue-600 rounded-md text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"

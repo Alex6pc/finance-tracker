@@ -11,8 +11,8 @@ export const useTransactionsStore = defineStore('transactions', () => {
   const transactions = ref<Transaction[]>([]);
   const selectedTransaction = ref<Transaction | null>(null);
   const filter = ref<FilterTransactionDto>({
-    startDate: dayjs().subtract(30, 'day').format('YYYY-MM-DD'),
-    endDate: dayjs().format('YYYY-MM-DD'),
+    startDate: dayjs().startOf('month').format('YYYY-MM-DD'),
+    endDate: dayjs().endOf('month').format('YYYY-MM-DD'),
   });
   const isLoading = ref(false);
   const error = ref<string | null>(null);

@@ -137,7 +137,7 @@ const clearTransactions = () => {
           </div>
           
           <!-- Data Management -->
-          <div class="mb-8">
+          <!-- <div class="mb-8">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Data Management</h2>
             
             <div class="space-y-4">
@@ -156,7 +156,7 @@ const clearTransactions = () => {
                 Clear All Transactions
               </button>
             </div>
-          </div>
+          </div> -->
           
           <!-- Actions -->
           <div class="flex justify-end space-x-3 border-t dark:border-gray-700 pt-6">
