@@ -10,8 +10,9 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   
   // Enable CORS for frontend
+  const frontendUrl = configService.get<string>('FRONTEND_URL');
   app.enableCors({
-    origin: 'http://localhost:3000', // Nuxt frontend URL
+    origin: frontendUrl || 'http://localhost:3002',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -32,6 +33,7 @@ async function bootstrap() {
   const port = configService.get<number>('PORT', 3001);
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}/api`);
+  console.log(`CORS enabled for origin: ${frontendUrl}`);
 }
 
 bootstrap();

@@ -1,9 +1,9 @@
-import { ref, computed } from 'vue';
-import type { Transaction, CreateTransactionDto, UpdateTransactionDto, FilterTransactionDto } from '~/types/transaction';
-
-const API_URL = 'http://localhost:3001/api';
+import type { Transaction, CreateTransactionDto, FilterTransactionDto } from '~/types/transaction';
 
 export const useApi = () => {
+  const config = useRuntimeConfig();
+  const API_URL = config.public.apiUrl;
+  
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 

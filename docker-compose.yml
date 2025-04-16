@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: bank_transactions
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -20,12 +20,13 @@ services:
       - ./frontend:/app
     working_dir: /app
     container_name: finance-tracker-frontend
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 3002"
     ports:
-      - "3000:3000"
-      - "24678:24678"
+      - "3002:3002"
+      - "24679:24678"
     environment:
       - NUXT_HOST=0.0.0.0
+      - NUXT_PORT=3002
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
     depends_on:
@@ -38,7 +39,7 @@ services:
     image: node:20-alpine
     working_dir: /app
     ports:
-      - "3001:3001"
+      - "3003:3001"
     command: sh -c "npm install && npm run start:dev"
     environment:
       DB_HOST: postgres
@@ -63,7 +64,7 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: postgres
     ports:
-      - "8080:8080"
+      - "8081:8080"
     depends_on:
       - postgres
     networks:

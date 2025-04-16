@@ -7,5 +7,10 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     // '@pinia-plugin-persist/nuxt',
   ],
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || '',
+    },
+  },
   css: ['~/assets/scss/main.scss']
 })

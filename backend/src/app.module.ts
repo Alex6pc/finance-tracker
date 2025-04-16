@@ -10,6 +10,7 @@ import { ImportsModule } from './imports/imports.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: `.env${process.env.NODE_ENV ? '.' + process.env.NODE_ENV : ''}`,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
