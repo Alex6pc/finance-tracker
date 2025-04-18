@@ -234,12 +234,12 @@ const exportTransactionsAsCsv = () => {
                   <span v-if="isLoading">Processing...</span>
                   <span v-else>Import Sample Data</span>
                 </button>
-                <button 
+                <!-- <button 
                   @click="exportTransactionsAsCsv" 
                   class="px-4 py-2 border border-gray-300 text-gray-700 dark:text-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Export Current Transactions
-                </button>
+                </button> -->
               </div>
             </div>
           </div>
