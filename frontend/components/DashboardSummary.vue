@@ -154,8 +154,7 @@ const doughnutOptions = computed(() => {
           label: (context: any) => {
             const label = context.label || '';
             const value = context.raw;
-            const percentage = Math.round(context.parsed);
-            return `${label}: ${formatCurrency(value)} (${percentage}%)`;
+            return `${label}: ${formatCurrency(value)}`;
           }
         },
         backgroundColor: isDarkMode.value ? 'rgba(45, 45, 58, 0.9)' : 'rgba(0, 0, 0, 0.7)',
